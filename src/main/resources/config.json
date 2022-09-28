@@ -1,0 +1,9 @@
+{
+	"db_url": "localhost",
+	"db_user": "root",
+	"db_password": "supersecure",
+	"initial_sites": [
+		"https://wiki.osdev.org/Main_Page",
+		"http://www.lowlevel.eu/wiki/Hauptseite"
+	]
+}
