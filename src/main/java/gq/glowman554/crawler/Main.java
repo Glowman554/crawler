@@ -48,7 +48,7 @@ public class Main
 		StarlightEventManager.register(linkQueue);
 		StarlightEventManager.register(databaseConnection);
 
-		new ThreadHelper(10, () -> {
+		new ThreadHelper(config.threads, () -> {
 			while (true)
 			{
 				try

@@ -20,6 +20,9 @@ public class Config
 	@ReflexField
 	public ReflexStringArray initial_sites;
 	
+	@ReflexField
+	public int threads;
+	
 	private static String config_path = "crawler_config.json";
 	
 	public static Config load() throws IOException, IllegalArgumentException, IllegalAccessException
