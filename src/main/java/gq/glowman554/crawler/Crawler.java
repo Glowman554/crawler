@@ -30,6 +30,6 @@ public class Crawler
 			title = titles.get(0).text();
 		}
 
-		new PageInsertEvent(title, link, doc.html()).call();
+		new PageInsertEvent(title.replace("\n", " "), link, doc.html().replace("\n", " ")).call();
 	}
 }
