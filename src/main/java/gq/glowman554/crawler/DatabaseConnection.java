@@ -33,6 +33,12 @@ public class DatabaseConnection
 		for (String sql : sql_commands)
 		{
 			sql = sql.trim()/* .replace("\n", " ").replace("\r", "") */;
+			
+			if (sql.equals(""))
+			{
+				continue;
+			}
+
 			System.out.println("Executing: " + sql);
 			s.execute(sql);
 		}
@@ -49,8 +55,8 @@ public class DatabaseConnection
 			s.execute("USE `search`");
 
 			s.setString(1, e.getUrl());
-			s.setString(2, e.getTitle());
-			s.setString(3, e.getPagetext());
+			s.setString(2, e.getTitle().replace("\\n", ""));
+			s.setString(3, e.getPagetext().replace("\\n", ""));
 
 			s.executeUpdate();
 			s.close();
