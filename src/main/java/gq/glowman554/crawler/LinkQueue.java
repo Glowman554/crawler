@@ -13,14 +13,6 @@ public class LinkQueue
 {
 	private ArrayList<String> current_links = new ArrayList<>();
 
-	public LinkQueue(String[] initial_links)
-	{
-		for (String s : initial_links)
-		{
-			current_links.add(s);
-		}
-	}
-
 	public String fetch()
 	{
 		String next;
@@ -75,6 +67,8 @@ public class LinkQueue
 			{
 				return;
 			}
+
+			link = url.getProtocol() + "://" + url.getHost() + url.getPath();
 		}
 		catch (MalformedURLException e1)
 		{
