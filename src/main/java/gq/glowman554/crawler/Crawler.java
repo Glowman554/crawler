@@ -8,11 +8,12 @@ import org.jsoup.select.Elements;
 
 import gq.glowman554.crawler.events.LinkInsertEvent;
 import gq.glowman554.crawler.events.PageInsertEvent;
+import gq.glowman554.crawler.events.PageUpdateEvent;
 import gq.glowman554.crawler.utils.HttpClient;
 
 public class Crawler
 {
-	public void crawl(String link) throws IOException
+	public void crawl(String link, boolean update) throws IOException
 	{
 		Document doc = Jsoup.parse(HttpClient.get(link), link);
 
@@ -30,6 +31,13 @@ public class Crawler
 			title = titles.get(0).text();
 		}
 
-		new PageInsertEvent(title.replace("\n", " "), link, doc.html().replace("\n", " ")).call();
+		if (update)
+		{
+			new PageUpdateEvent(title.replace("\n", " "), link, doc.html().replace("\n", " ")).call();
+		}
+		else
+		{
+			new PageInsertEvent(title.replace("\n", " "), link, doc.html().replace("\n", " ")).call();
+		}
 	}
 }

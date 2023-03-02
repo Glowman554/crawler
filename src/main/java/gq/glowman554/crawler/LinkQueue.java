@@ -37,10 +37,8 @@ public class LinkQueue
 		}
 	}
 
-	@StarlightEventTarget
-	public void onLinkInsert(LinkInsertEvent e)
+	public void insert(String link)
 	{
-		String link = e.getLink().trim();
 
 		if (link.equals("") || !(link.startsWith("https://") || link.startsWith("http://")))
 		{
@@ -83,5 +81,11 @@ public class LinkQueue
 
 			current_links.add(link);
 		}
+	}
+	
+	@StarlightEventTarget
+	public void onLinkInsert(LinkInsertEvent e)
+	{
+		insert(e.getLink().trim());
 	}
 }

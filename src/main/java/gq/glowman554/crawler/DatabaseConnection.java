@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import gq.glowman554.crawler.events.PageInsertEvent;
+import gq.glowman554.crawler.events.PageUpdateEvent;
 import gq.glowman554.crawler.utils.FileUtils;
 import gq.glowman554.starlight.annotations.StarlightEventTarget;
 
@@ -19,7 +20,7 @@ public class DatabaseConnection
 	public DatabaseConnection(String url, String username, String password) throws ClassNotFoundException, SQLException, IOException
 	{
 		// Setup the connection with the DB
-		connect = DriverManager.getConnection(String.format("jdbc:mysql://%s/search2?user=%s&password=%s", url, username, password));
+		connect = DriverManager.getConnection(String.format("jdbc:mysql://%s/search?user=%s&password=%s", url, username, password));
 
 		execute_script("database_setup");
 	}
@@ -45,6 +46,22 @@ public class DatabaseConnection
 		s.close();
 	}
 
+	private int linkToId(String link) throws SQLException
+	{
+		PreparedStatement s = connect.prepareStatement("SELECT `site_id` FROM `sites` WHERE link = ?");
+		s.setString(1, link);
+		
+		ResultSet rs = s.executeQuery();
+		
+		rs.next();
+		int result = rs.getInt("site_id");
+		
+		rs.close();
+		s.close();
+		
+		return result;
+	}
+	
 	@StarlightEventTarget
 	public void onPageInsert(PageInsertEvent e)
 	{
@@ -64,6 +81,42 @@ public class DatabaseConnection
 			e1.printStackTrace();
 		}
 
+	}
+	
+	@StarlightEventTarget
+	public void onPageUpdate(PageUpdateEvent e)
+	{
+		try
+		{
+			PreparedStatement s = connect.prepareStatement("UPDATE `sites` SET link = ?, title = ?, text = ? WHERE site_id = ?");
+
+			s.setString(1, e.getUrl());
+			s.setString(2, e.getTitle().replace("\\n", ""));
+			s.setString(3, e.getPagetext().replace("\\n", ""));
+			s.setInt(4, linkToId(e.getUrl()));
+
+			s.executeUpdate();
+			s.close();
+		}
+		catch (SQLException e1)
+		{
+			e1.printStackTrace();
+		}
+
+	}
+	
+	public String fetchRandomSite() throws SQLException
+	{
+		PreparedStatement s = connect.prepareStatement("SELECT `link` FROM `sites` ORDER BY RAND() LIMIT 1");
+		ResultSet rs = s.executeQuery();
+		
+		rs.next();
+		String result = rs.getString("link");
+		
+		rs.close();
+		s.close();
+		
+		return result;
 	}
 	
 	public boolean isCrawled(String link)

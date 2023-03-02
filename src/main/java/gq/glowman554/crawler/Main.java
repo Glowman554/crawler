@@ -15,6 +15,7 @@ public class Main
 	private static Main instance;
 
 	private LinkQueue linkQueue;
+	private LinkQueue refreshQueue;
 	private Crawler crawler = new Crawler();
 	private DatabaseConnection databaseConnection;
 	private Config config;
@@ -34,6 +35,7 @@ public class Main
 		config = Config.load();
 
 		linkQueue = new LinkQueue();
+		refreshQueue = new LinkQueue();
 		StarlightEventManager.register(linkQueue);
 
 		for (int i = 0; i < config.initial_sites.len(); i++)
@@ -57,7 +59,7 @@ public class Main
 					String link = linkQueue.fetch();
 					if (!databaseConnection.isCrawled(link))
 					{
-						crawler.crawl(link);
+						crawler.crawl(link, false);
 					}
 				}
 				catch (IOException | IllegalStateException e)
@@ -72,7 +74,38 @@ public class Main
 					}
 				}
 			}
-		}).start().join();
+		}).start();
+
+		new ThreadHelper(config.threads, () -> {
+			while (true)
+			{
+				try
+				{
+					String link = refreshQueue.fetch();
+					System.out.println("Updating " + link + "...");
+					crawler.crawl(link, true);
+				}
+				catch (IOException | IllegalStateException e)
+				{
+					e.printStackTrace();
+					try
+					{
+						Thread.sleep(1000 * 10);
+					}
+					catch (InterruptedException e1)
+					{
+					}
+				}
+			}
+		}).start();
+
+		while (true)
+		{
+			if (refreshQueue.len() < 1000)
+			{
+				refreshQueue.insert(databaseConnection.fetchRandomSite());
+			}
+		}
 	}
 
 	@StarlightEventTarget

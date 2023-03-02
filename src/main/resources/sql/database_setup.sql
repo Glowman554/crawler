@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS `sites` (
   `site_id` int NOT NULL AUTO_INCREMENT,
   `link` text,
   `title` text,
-  `text` text,
+  `text` LONGTEXT,
   `added` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`site_id`),
   FULLTEXT KEY `title` (`title`,`link`,`text`)
