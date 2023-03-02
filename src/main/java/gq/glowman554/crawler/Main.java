@@ -32,11 +32,10 @@ public class Main
 	public Main() throws IllegalArgumentException, IllegalAccessException, IOException
 	{
 		config = Config.load();
-		
+
 		linkQueue = new LinkQueue();
 		StarlightEventManager.register(linkQueue);
 
-		
 		for (int i = 0; i < config.initial_sites.len(); i++)
 		{
 			new LinkInsertEvent(config.initial_sites.get(i)).call();
@@ -47,7 +46,7 @@ public class Main
 	{
 		databaseConnection = new DatabaseConnection(config.db_url, config.db_user, config.db_password);
 		StarlightEventManager.register(this);
-		
+
 		StarlightEventManager.register(databaseConnection);
 
 		new ThreadHelper(config.threads, () -> {
@@ -55,7 +54,11 @@ public class Main
 			{
 				try
 				{
-					crawler.crawl(linkQueue.fetch());
+					String link = linkQueue.fetch();
+					if (!databaseConnection.isCrawled(link))
+					{
+						crawler.crawl(link);
+					}
 				}
 				catch (IOException | IllegalStateException e)
 				{

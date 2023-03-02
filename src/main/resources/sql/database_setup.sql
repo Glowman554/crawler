@@ -1,7 +1,3 @@
-CREATE DATABASE IF NOT EXISTS `search`;
-
-USE `search`;
-
 CREATE TABLE IF NOT EXISTS `sites` (
   `site_id` int NOT NULL AUTO_INCREMENT,
   `link` text,

@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import gq.glowman554.crawler.events.LinkDbCheck;
 import gq.glowman554.crawler.events.PageInsertEvent;
 import gq.glowman554.crawler.utils.FileUtils;
 import gq.glowman554.starlight.annotations.StarlightEventTarget;
@@ -20,7 +19,7 @@ public class DatabaseConnection
 	public DatabaseConnection(String url, String username, String password) throws ClassNotFoundException, SQLException, IOException
 	{
 		// Setup the connection with the DB
-		connect = DriverManager.getConnection(String.format("jdbc:mysql://%s/?user=%s&password=%s", url, username, password));
+		connect = DriverManager.getConnection(String.format("jdbc:mysql://%s/search2?user=%s&password=%s", url, username, password));
 
 		execute_script("database_setup");
 	}
@@ -52,7 +51,6 @@ public class DatabaseConnection
 		try
 		{
 			PreparedStatement s = connect.prepareStatement("INSERT IGNORE INTO `sites` (link, title, text) VALUES (?, ?, ?)");
-			s.execute("USE `search`");
 
 			s.setString(1, e.getUrl());
 			s.setString(2, e.getTitle().replace("\\n", ""));
@@ -67,23 +65,22 @@ public class DatabaseConnection
 		}
 
 	}
-
-	@StarlightEventTarget
-	public void onLinkBeforeCrawl(LinkDbCheck e)
+	
+	public boolean isCrawled(String link)
 	{
+		boolean return_val = false;
 		try
 		{
 			PreparedStatement s = connect.prepareStatement("SELECT `link` FROM `sites` WHERE `link` = ?");
-			s.execute("USE `search`");
 
-			s.setString(1, e.getLink());
+			s.setString(1, link);
 
 			ResultSet rs = s.executeQuery();
 
 			if (rs.next())
 			{
-				System.out.println(e.getLink() + " already in db!");
-				e.setCanceled(true);
+				System.out.println(link + " already in db!");
+				return_val = true;
 			}
 
 			rs.close();
@@ -93,5 +90,7 @@ public class DatabaseConnection
 		{
 			e1.printStackTrace();
 		}
+		
+		return return_val;
 	}
 }

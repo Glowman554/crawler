@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import gq.glowman554.crawler.events.LinkDbCheck;
 import gq.glowman554.crawler.events.LinkInsertEvent;
 import gq.glowman554.crawler.utils.FileUtils;
 import gq.glowman554.starlight.annotations.StarlightEventTarget;
@@ -26,18 +25,8 @@ public class LinkQueue
 			next = current_links.get(0);
 			current_links.remove(0);
 		}
-
-		LinkDbCheck e = new LinkDbCheck(next);
-		e.call();
-
-		if (e.isCanceled())
-		{
-			return fetch();
-		}
-		else
-		{
-			return next;
-		}
+		
+		return next;
 	}
 
 	public int len()
