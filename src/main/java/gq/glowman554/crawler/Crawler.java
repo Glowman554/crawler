@@ -6,10 +6,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import gq.glowman554.crawler.constrain.ConstrainManager;
-import gq.glowman554.crawler.constrain.impl.WikipediaConstrain;
-import gq.glowman554.crawler.constrain.impl.WikisourceConstrain;
-import gq.glowman554.crawler.constrain.impl.WiktionaryConstrain;
 import gq.glowman554.crawler.events.LinkInsertEvent;
 import gq.glowman554.crawler.events.PageInsertEvent;
 import gq.glowman554.crawler.events.PageUpdateEvent;
@@ -17,15 +13,6 @@ import gq.glowman554.crawler.utils.HttpClient;
 
 public class Crawler
 {
-	private ConstrainManager<String> validator = new ConstrainManager<>();
-
-	public Crawler()
-	{
-		validator.add(new WikipediaConstrain());
-		validator.add(new WiktionaryConstrain());
-		validator.add(new WikisourceConstrain());
-	}
-
 	public void crawl(String link, boolean update) throws IOException
 	{
 		Document doc = Jsoup.parse(HttpClient.get(link), link);
@@ -35,10 +22,7 @@ public class Crawler
 		for (int i = 0; i < links.size(); i++)
 		{
 			String link_s = links.get(i).absUrl("href");
-			if (!validator.compute(link))
-			{
-				new LinkInsertEvent(link_s).call();
-			}
+			new LinkInsertEvent(link_s).call();
 		}
 
 		Elements titles = doc.getElementsByTag("title");

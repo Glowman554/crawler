@@ -4,12 +4,25 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import gq.glowman554.crawler.constrain.ConstrainManager;
+import gq.glowman554.crawler.constrain.impl.WikipediaConstrain;
+import gq.glowman554.crawler.constrain.impl.WikisourceConstrain;
+import gq.glowman554.crawler.constrain.impl.WiktionaryConstrain;
 import gq.glowman554.crawler.events.LinkInsertEvent;
 import gq.glowman554.crawler.utils.FileUtils;
 import gq.glowman554.starlight.annotations.StarlightEventTarget;
 
 public class LinkQueue
 {
+	private ConstrainManager<String> validator = new ConstrainManager<>();
+
+	public LinkQueue()
+	{
+		validator.add(new WikipediaConstrain());
+		validator.add(new WiktionaryConstrain());
+		validator.add(new WikisourceConstrain());
+	}
+	
 	private ArrayList<String> current_links = new ArrayList<>();
 
 	public String fetch()
@@ -39,6 +52,10 @@ public class LinkQueue
 
 	public void insert(String link)
 	{
+		if (validator.compute(link))
+		{
+			return;
+		}
 
 		if (link.equals("") || !(link.startsWith("https://") || link.startsWith("http://")))
 		{
