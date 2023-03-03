@@ -7,7 +7,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import gq.glowman554.crawler.constrain.ConstrainManager;
-import gq.glowman554.crawler.constrain.impl.WikipediaConstain;
+import gq.glowman554.crawler.constrain.impl.WikipediaConstrain;
+import gq.glowman554.crawler.constrain.impl.WiktionaryConstrain;
 import gq.glowman554.crawler.events.LinkInsertEvent;
 import gq.glowman554.crawler.events.PageInsertEvent;
 import gq.glowman554.crawler.events.PageUpdateEvent;
@@ -19,7 +20,8 @@ public class Crawler
 
 	public Crawler()
 	{
-		validator.add(new WikipediaConstain());
+		validator.add(new WikipediaConstrain());
+		validator.add(new WiktionaryConstrain());
 	}
 
 	public void crawl(String link, boolean update) throws IOException

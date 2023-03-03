@@ -2,7 +2,7 @@ package gq.glowman554.crawler.constrain.impl;
 
 import gq.glowman554.crawler.constrain.Constrain;
 
-public class WikipediaConstain implements Constrain<String>
+public class WikipediaConstrain implements Constrain<String>
 {
 
 	@Override

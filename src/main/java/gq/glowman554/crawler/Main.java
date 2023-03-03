@@ -76,7 +76,7 @@ public class Main
 			}
 		}).start();
 
-		new ThreadHelper(config.threads, () -> {
+		new ThreadHelper(config.threads / 2, () -> {
 			while (true)
 			{
 				try
