@@ -6,5 +6,6 @@
 		"https://wiki.osdev.org/Main_Page",
 		"http://www.lowlevel.eu/wiki/Hauptseite"
 	],
-	"threads": 1
+	"threads": 1,
+	"update_old": false
 }

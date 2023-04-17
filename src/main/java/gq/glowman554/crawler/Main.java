@@ -76,34 +76,36 @@ public class Main
 			}
 		}).start();
 
-		new ThreadHelper(config.threads / 2, () -> {
-			while (true)
-			{
-				try
+		if (config.update_old) {
+			new ThreadHelper(config.threads / 2, () -> {
+				while (true)
 				{
-					String link = refreshQueue.fetch();
-					System.out.println("Updating " + link + "...");
-					crawler.crawl(link, true);
-				}
-				catch (IOException | IllegalStateException e)
-				{
-					e.printStackTrace();
 					try
 					{
-						Thread.sleep(1000 * 10);
+						String link = refreshQueue.fetch();
+						System.out.println("Updating " + link + "...");
+						crawler.crawl(link, true);
 					}
-					catch (InterruptedException e1)
+					catch (IOException | IllegalStateException e)
 					{
+						e.printStackTrace();
+						try
+						{
+							Thread.sleep(1000 * 10);
+						}
+						catch (InterruptedException e1)
+						{
+						}
 					}
 				}
-			}
-		}).start();
+			}).start();
 
-		while (true)
-		{
-			if (refreshQueue.len() < 1000)
+			while (true)
 			{
-				refreshQueue.insert(databaseConnection.fetchRandomSite());
+				if (refreshQueue.len() < 1000)
+				{
+					refreshQueue.insert(databaseConnection.fetchRandomSite());
+				}
 			}
 		}
 	}

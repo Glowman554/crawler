@@ -19,6 +19,8 @@ public class Config
 	public String db_password;
 	@ReflexField
 	public ReflexStringArray initial_sites;
+	@ReflexField
+	public boolean update_old;
 	
 	@ReflexField
 	public int threads;
